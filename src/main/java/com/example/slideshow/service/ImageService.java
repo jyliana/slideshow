@@ -2,23 +2,24 @@ package com.example.slideshow.service;
 
 import com.example.slideshow.dto.ImageDto;
 import com.example.slideshow.entity.Image;
+import com.example.slideshow.exception.IllegalMediaTypeException;
 import com.example.slideshow.exception.ResourceNotFoundException;
 import com.example.slideshow.repository.ImageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ImageService {
 
-  @Autowired
   private ImageRepository imageRepository;
 
   public Image addImage(String url, Integer duration) {
     if (!isValidImageUrl(url)) {
-      throw new IllegalArgumentException("Invalid image URL");
+      throw new IllegalMediaTypeException("Invalid image URL");
     }
 
     var image = new Image();
@@ -55,6 +56,5 @@ public class ImageService {
 
     return new ImageDto(image.getId(), image.getUrl(), image.getDuration(), slideshowDTOs);
   }
-
 
 }

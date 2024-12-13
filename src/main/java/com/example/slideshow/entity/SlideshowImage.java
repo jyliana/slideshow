@@ -41,4 +41,5 @@ public class SlideshowImage {
     this.image = image;
     this.addedDate = addedDate;
   }
+
 }

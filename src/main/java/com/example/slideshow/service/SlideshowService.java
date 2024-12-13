@@ -8,7 +8,6 @@ import com.example.slideshow.exception.ResourceNotFoundException;
 import com.example.slideshow.repository.ImageRepository;
 import com.example.slideshow.repository.SlideshowImageRepository;
 import com.example.slideshow.repository.SlideshowRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +29,7 @@ public class SlideshowService {
     List<Image> images = imageRepository.findAllById(imageIds);
 
     if (images.isEmpty()) {
-      throw new IllegalArgumentException("No valid images found for the provided IDs.");
+      throw new ResourceNotFoundException("No valid images found for the provided IDs.");
     }
 
     var slideshow = new Slideshow(name);
@@ -47,9 +44,6 @@ public class SlideshowService {
 
     for (Image image : images) {
       var slideshowImage = new SlideshowImage(slideshow, image, LocalDateTime.now());
-//      slideshowImage.setSlideshow(slideshow);
-//      slideshowImage.setImage(image);
-//      slideshowImage.setAddedDate(LocalDateTime.now());
       slideshowImageRepository.save(slideshowImage);
     }
 
@@ -69,19 +63,18 @@ public class SlideshowService {
     slideshowRepository.deleteById(id);
   }
 
-  public List<Image> getOrderedImages(Long slideshowId) {
-    var slideshow = slideshowRepository.findById(slideshowId)
-            .orElseThrow(() -> new EntityNotFoundException("Slideshow not found"));
+  public List<SlideshowDto.ImageDto> getOrderedImages(Long slideshowId) {
+    var slideshowImageList = slideshowImageRepository.findBySlideshowId(slideshowId)
+            .orElseThrow(() -> new ResourceNotFoundException("Slideshow not found"));
 
-    return slideshow.getImages().stream()
-            .sorted(Comparator.comparing(Image::getId))
-            .collect(toList());
+    var slideshowDto = mapToSlideshowDto(slideshowImageList);
+
+    return slideshowDto.images().stream().sorted(Comparator.comparing(SlideshowDto.ImageDto::addedDate)).toList();
   }
 
   public SlideshowDto getSlideshow(Long slideshowId) {
-    var slideshowImageList = slideshowImageRepository.findByIdSlideshowId(slideshowId)
-            .orElseThrow(() -> new EntityNotFoundException("Slideshow not found"));
-
+    var slideshowImageList = slideshowImageRepository.findBySlideshowId(slideshowId)
+            .orElseThrow(() -> new ResourceNotFoundException("Slideshow not found."));
 
     if (slideshowImageList.isEmpty()) {
       throw new ResourceNotFoundException("The slideshow image list is empty.");

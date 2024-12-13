@@ -1,9 +1,10 @@
 package com.example.slideshow.controller;
 
 import com.example.slideshow.dto.SlideshowDto;
-import com.example.slideshow.entity.Image;
+import com.example.slideshow.entity.ProofOfPlayEvent;
 import com.example.slideshow.entity.Slideshow;
 import com.example.slideshow.entity.SlideshowRequest;
+import com.example.slideshow.service.ProofOfPlayEventService;
 import com.example.slideshow.service.SlideshowService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,11 @@ import java.util.List;
 public class SlideshowController {
 
   private SlideshowService slideshowService;
+  private ProofOfPlayEventService proofOfPlayEventService;
 
   @PostMapping("/addSlideShowWithNewImages")
   public ResponseEntity<Slideshow> addSlideshowWithNewImages(@RequestBody SlideshowRequest request) {
-    var slideshow = slideshowService.addSlideshowWithNewImages(request.getImages(), request.getName());
+    var slideshow = slideshowService.addSlideshowWithNewImages(request.images(), request.name());
     return ResponseEntity.ok(slideshow);
   }
 
@@ -44,12 +46,17 @@ public class SlideshowController {
   @DeleteMapping("/deleteSlideshow/{id}")
   public ResponseEntity<Void> deleteSlideshow(@PathVariable Long id) {
     slideshowService.deleteSlideshow(id);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.accepted().build();
   }
 
   @GetMapping("/{id}/slideshowOrder")
-  public ResponseEntity<List<Image>> getOrderedImages(@PathVariable Long id) {
+  public ResponseEntity<List<SlideshowDto.ImageDto>> getOrderedImages(@PathVariable Long id) {
     return ResponseEntity.ok(slideshowService.getOrderedImages(id));
+  }
+
+  @GetMapping("/{id}/proof-of-play/{imageId}")
+  public ResponseEntity<ProofOfPlayEvent> recordEvent(@PathVariable Long id, @PathVariable Long imageId) {
+    return ResponseEntity.ok(proofOfPlayEventService.recordEvent(id, imageId));
   }
 
 }

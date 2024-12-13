@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface SlideshowImageRepository extends JpaRepository<SlideshowImage, SlideshowImageId> {
 
-  Optional<List<SlideshowImage>> findByIdSlideshowId(Long slideshowId);
+  Optional<List<SlideshowImage>> findBySlideshowId(Long slideshowId);
+
+  Optional<SlideshowImage> findBySlideshowIdAndImageId(Long slideshowId, Long imageId);
 
 }
