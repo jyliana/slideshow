@@ -2,6 +2,8 @@ package com.example.slideshow.controller;
 
 import com.example.slideshow.dto.SlideshowDto;
 import com.example.slideshow.entity.ProofOfPlayEvent;
+import com.example.slideshow.entity.Slideshow;
+import com.example.slideshow.entity.SlideshowRequest;
 import com.example.slideshow.service.ProofOfPlayEventService;
 import com.example.slideshow.service.SlideshowService;
 import lombok.AllArgsConstructor;
