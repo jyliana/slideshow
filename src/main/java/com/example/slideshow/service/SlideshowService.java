@@ -41,6 +41,7 @@ public class SlideshowService {
   private Slideshow saveSlideshowWithImages(Slideshow slideshow, List<Image> images) {
     slideshow = slideshowRepository.save(slideshow);
 
+    // TO DO - DELETE OR NOT?
     for (Image image : images) {
       var slideshowImage = new SlideshowImage(slideshow, image);
       slideshowImageRepository.save(slideshowImage);

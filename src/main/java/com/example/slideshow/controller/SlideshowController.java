@@ -2,11 +2,10 @@ package com.example.slideshow.controller;
 
 import com.example.slideshow.dto.SlideshowDto;
 import com.example.slideshow.entity.ProofOfPlayEvent;
-import com.example.slideshow.entity.Slideshow;
-import com.example.slideshow.entity.SlideshowRequest;
 import com.example.slideshow.service.ProofOfPlayEventService;
 import com.example.slideshow.service.SlideshowService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +34,7 @@ public class SlideshowController {
 
   @PostMapping("/addSlideshow")
   public ResponseEntity<SlideshowDto> addSlideshow(@RequestBody List<Long> imageIds, @RequestParam String name) {
-    return ResponseEntity.ok(slideshowService.addSlideshow(imageIds, name));
+    return ResponseEntity.status(HttpStatus.CREATED).body(slideshowService.addSlideshow(imageIds, name));
   }
 
   @GetMapping("/getSlideshow/{id}")

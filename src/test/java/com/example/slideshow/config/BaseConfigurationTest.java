@@ -3,7 +3,6 @@ package com.example.slideshow.config;
 
 import com.example.slideshow.SlideshowApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,8 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = SlideshowApplication.class)
 public class BaseConfigurationTest {
-  @Autowired
-  protected EntityManager entityManager;
 
   @Autowired
   protected ObjectMapper objectMapper;
