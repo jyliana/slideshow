@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -30,6 +31,12 @@ public class ProofOfPlayEvent {
   private Long imageId;
 
   @Column(name = "played_at", nullable = false)
+  @CreationTimestamp
   private LocalDateTime playedAt;
+
+  public ProofOfPlayEvent(Long slideshowId, Long imageId) {
+    this.slideshowId = slideshowId;
+    this.imageId = imageId;
+  }
 
 }

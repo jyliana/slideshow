@@ -38,4 +38,9 @@ public class Image {
   @ManyToMany(mappedBy = "images", fetch = FetchType.EAGER)
   private List<Slideshow> slideshows = new ArrayList<>();
 
+  public Image(String url, Integer duration) {
+    this.url = url;
+    this.duration = duration;
+  }
+
 }

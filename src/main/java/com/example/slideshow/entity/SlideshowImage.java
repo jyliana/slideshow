@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -34,12 +35,12 @@ public class SlideshowImage {
   private Image image;
 
   @Column(name = "added_date")
+  @CreationTimestamp
   private LocalDateTime addedDate;
 
-  public SlideshowImage(Slideshow slideshow, Image image, LocalDateTime addedDate) {
+  public SlideshowImage(Slideshow slideshow, Image image) {
     this.slideshow = slideshow;
     this.image = image;
-    this.addedDate = addedDate;
   }
 
 }

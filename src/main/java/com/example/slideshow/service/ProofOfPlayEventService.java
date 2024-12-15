@@ -7,8 +7,6 @@ import com.example.slideshow.repository.SlideshowImageRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @AllArgsConstructor
 public class ProofOfPlayEventService {
@@ -24,10 +22,7 @@ public class ProofOfPlayEventService {
       throw new ResourceNotFoundException(String.format("Slideshow_id: %s with image_id: %s cannot be found", slideshowId, imageId));
     }
 
-    var event = new ProofOfPlayEvent();
-    event.setSlideshowId(slideshowId);
-    event.setImageId(imageId);
-    event.setPlayedAt(LocalDateTime.now());
+    var event = new ProofOfPlayEvent(slideshowId, imageId);
 
     return proofOfPlayEventRepository.save(event);
   }

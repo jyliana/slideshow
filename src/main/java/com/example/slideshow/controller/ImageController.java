@@ -32,7 +32,7 @@ public class ImageController {
 
   @GetMapping("/getImage/{id}")
   public ResponseEntity<ImageDto> getImage(@PathVariable Long id) {
-    return ResponseEntity.ok().body(imageService.getImage(id));
+    return ResponseEntity.ok(imageService.getImage(id));
   }
 
   @DeleteMapping("/deleteImage/{id}")
@@ -44,7 +44,7 @@ public class ImageController {
 
   @GetMapping("/search")
   public ResponseEntity<List<ImageDto>> searchImages(@RequestParam String keyword, @RequestParam Long duration) {
-    return ResponseEntity.ok().body(imageService.searchImages(keyword, duration));
+    return ResponseEntity.ok(imageService.searchImages(keyword, duration));
   }
 
 }

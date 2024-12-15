@@ -28,7 +28,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     Map<String, String> validationErrors = new HashMap<>();
     List<ObjectError> validationErrorList = ex.getBindingResult().getAllErrors();
 
-    validationErrorList.forEach((error) -> {
+    validationErrorList.forEach(error -> {
       String fieldName = ((FieldError) error).getField();
       String validationMsg = error.getDefaultMessage();
       validationErrors.put(fieldName, validationMsg);
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                 WebRequest webRequest) {
     var errorResponse = new ErrorResponseDto(
             webRequest.getDescription(false),
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
             exception.getMessage(),
             LocalDateTime.now());
 
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                           WebRequest webRequest) {
     var errorResponse = new ErrorResponseDto(
             webRequest.getDescription(false),
-            HttpStatus.NOT_FOUND,
+            HttpStatus.NOT_FOUND.getReasonPhrase(),
             exception.getMessage(),
             LocalDateTime.now());
 
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                          WebRequest webRequest) {
     var errorResponse = new ErrorResponseDto(
             webRequest.getDescription(false),
-            HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+            HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(),
             exception.getMessage(),
             LocalDateTime.now());
 

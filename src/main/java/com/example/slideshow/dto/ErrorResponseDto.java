@@ -1,9 +1,7 @@
 package com.example.slideshow.dto;
 
-import org.springframework.http.HttpStatus;
-
 import java.time.LocalDateTime;
 
-public record ErrorResponseDto(String apiPath, HttpStatus errorCode, String errorMsg, LocalDateTime errorTime) {
+public record ErrorResponseDto(String apiPath, String errorCode, String errorMsg, LocalDateTime errorTime) {
 
 }

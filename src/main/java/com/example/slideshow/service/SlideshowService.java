@@ -12,7 +12,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class SlideshowService {
     slideshow = slideshowRepository.save(slideshow);
 
     for (Image image : images) {
-      var slideshowImage = new SlideshowImage(slideshow, image, LocalDateTime.now());
+      var slideshowImage = new SlideshowImage(slideshow, image);
       slideshowImageRepository.save(slideshowImage);
     }
 

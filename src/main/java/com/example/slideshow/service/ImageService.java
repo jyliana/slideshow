@@ -22,9 +22,7 @@ public class ImageService {
       throw new IllegalMediaTypeException("Invalid image URL");
     }
 
-    var image = new Image();
-    image.setUrl(url);
-    image.setDuration(duration);
+    var image = new Image(url, duration);
 
     return imageRepository.save(image);
   }
