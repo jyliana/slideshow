@@ -4,15 +4,10 @@ import com.example.slideshow.config.BaseConfigurationTest;
 import com.example.slideshow.dto.SlideshowDto;
 import com.example.slideshow.entity.Image;
 import com.example.slideshow.entity.Slideshow;
-import com.example.slideshow.repository.ImageRepository;
-import com.example.slideshow.repository.SlideshowImageRepository;
-import com.example.slideshow.repository.SlideshowRepository;
 import lombok.SneakyThrows;
 import org.hamcrest.core.Is;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -31,33 +26,17 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 class SlideshowControllerTest extends BaseConfigurationTest {
   private static final String REST_API = "/slideShow";
 
-  @Autowired
-  private SlideshowRepository slideshowRepository;
-  @Autowired
-  private SlideshowImageRepository slideshowImageRepository;
-  @Autowired
-  private ImageRepository imageRepository;
-
   @BeforeEach
   public void setup() {
     super.setup();
-  }
-
-  @AfterEach
-  public void cleanUp() {
-    slideshowImageRepository.deleteAll();
-    imageRepository.deleteAll();
-    slideshowRepository.deleteAll();
   }
 
   @Test
   @SneakyThrows
   void testAddSlideshow_200Response() {
     // Given
-    var image1 = new Image("http://example.com/image_forest.jpg", 5);
-    var image2 = new Image("http://example.com/image_field.jpg", 10);
-    imageRepository.save(image1);
-    imageRepository.save(image2);
+    imageRepository.save(new Image("http://example.com/image_forest.jpg", 5));
+    imageRepository.save(new Image("http://example.com/image_field.jpg", 10));
 
     var uriString = fromUriString(REST_API)
             .path("/addSlideshow")
@@ -130,12 +109,11 @@ class SlideshowControllerTest extends BaseConfigurationTest {
   @SneakyThrows
   void testGetSlideshow_200Response() {
     // Given
-    var image1 = new Image("http://example.com/image_forest.jpg", 5);
-    var image2 = new Image("http://example.com/image_field.jpg", 10);
+    var image1 = imageRepository.save(new Image("http://example.com/image_forest.jpg", 5));
+    var image2 = imageRepository.save(new Image("http://example.com/image_field.jpg", 10));
     var slideshow = new Slideshow("Vacation");
-    var re1 = imageRepository.save(image1);
-    var re2 = imageRepository.save(image2);
-    slideshow.setImages(List.of(re1, re2));
+
+    slideshow.setImages(List.of(image1, image2));
     slideshowRepository.save(slideshow);
 
     var uriString = fromUriString(REST_API)
@@ -161,6 +139,81 @@ class SlideshowControllerTest extends BaseConfigurationTest {
             .andExpect(jsonPath("$.images.[1].url", is("http://example.com/image_field.jpg")))
             .andExpect(jsonPath("$.images.[1].duration", is(10)))
             .andExpect(jsonPath("$.images.[1].addedDate").exists());
+  }
+
+  @Test
+  @SneakyThrows
+  void testDeleteSlideshow_202Response() {
+    // Given
+    var image1 = imageRepository.save(new Image("http://example.com/image_forest.jpg", 5));
+    var image2 = imageRepository.save(new Image("http://example.com/image_field.jpg", 10));
+    var slideshow = new Slideshow("Vacation");
+
+    slideshow.setImages(List.of(image1, image2));
+    slideshowRepository.save(slideshow);
+
+    var uriString = fromUriString(REST_API)
+            .path("/deleteSlideshow/{id}")
+            .uriVariables(Map.of("id", "1"))
+            .toUriString();
+
+    // When
+    var result = mockMvc.perform(MockMvcRequestBuilders.delete(uriString)
+            .contentType(APPLICATION_JSON));
+
+    // Then
+    result
+            .andExpect(status().isAccepted())
+            .andExpect(jsonPath("$.id").doesNotExist());
+
+    var slideExists = slideshowRepository.existsById(slideshow.getId());
+    var slideshowImageExists = slideshowImageRepository.findBySlideshowId(slideshow.getId()).orElse(null);
+
+    assertThat(slideExists).isFalse();
+    assertThat(slideshowImageExists.isEmpty()).isTrue();
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetSlideshowOrder_200Response() {
+    // Given
+    var image1 = imageRepository.save(new Image("http://example.com/image_forest.jpg", 5));
+    var image2 = imageRepository.save(new Image("http://example.com/image_field.jpg", 10));
+    var image3 = imageRepository.save(new Image("http://example.com/image_sea.jpg", 3));
+    var slideshow = new Slideshow("Vacation");
+
+    slideshow.setImages(List.of(image1, image2, image3));
+    slideshowRepository.save(slideshow);
+
+    var uriString = fromUriString(REST_API)
+            .path("/{id}/slideshowOrder")
+            .uriVariables(Map.of("id", "1"))
+            .toUriString();
+
+    // When
+    var result = mockMvc.perform(MockMvcRequestBuilders.get(uriString)
+            .contentType(APPLICATION_JSON));
+
+    // Then
+    result
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[0].id").exists())
+            .andExpect(jsonPath("$.[0].url", is("http://example.com/image_forest.jpg")))
+            .andExpect(jsonPath("$.[0].duration", is(5)))
+            .andExpect(jsonPath("$.[0].addedDate").exists())
+            .andExpect(jsonPath("$.[1].id").exists())
+            .andExpect(jsonPath("$.[1].url", is("http://example.com/image_field.jpg")))
+            .andExpect(jsonPath("$.[1].duration", is(10)))
+            .andExpect(jsonPath("$.[1].addedDate").exists())
+            .andExpect(jsonPath("$.[2].id").exists())
+            .andExpect(jsonPath("$.[2].url", is("http://example.com/image_sea.jpg")))
+            .andExpect(jsonPath("$.[2].duration", is(3)))
+            .andExpect(jsonPath("$.[2].addedDate").exists());
+
+    var response = result.andReturn().getResponse().getContentAsString();
+    List<SlideshowDto.ImageDto> slideshowDtoList = objectMapper
+            .readerForListOf(SlideshowDto.ImageDto.class)
+            .readValue(response);
   }
 
 }

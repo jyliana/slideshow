@@ -2,13 +2,19 @@ package com.example.slideshow.config;
 
 
 import com.example.slideshow.SlideshowApplication;
+import com.example.slideshow.repository.ImageRepository;
+import com.example.slideshow.repository.SlideshowImageRepository;
+import com.example.slideshow.repository.SlideshowRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -30,6 +36,17 @@ public class BaseConfigurationTest {
 
   protected MockMvc mockMvc;
 
+  @Autowired
+  protected JdbcTemplate jdbcTemplate;
+
+  @Autowired
+  protected SlideshowRepository slideshowRepository;
+
+  @Autowired
+  protected SlideshowImageRepository slideshowImageRepository;
+
+  @Autowired
+  protected ImageRepository imageRepository;
 
   @ClassRule
   public static PostgreSQLTestContainer testContainer = PostgreSQLTestContainer.getInstance();
@@ -46,6 +63,17 @@ public class BaseConfigurationTest {
     mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
             .alwaysDo(print())
             .build();
+  }
+
+  @AfterEach
+  @Transactional
+  public void cleanUp() {
+    slideshowImageRepository.deleteAll();
+    imageRepository.deleteAll();
+    slideshowRepository.deleteAll();
+    jdbcTemplate.execute("TRUNCATE slideshow_image RESTART IDENTITY CASCADE");
+    jdbcTemplate.execute("TRUNCATE images RESTART IDENTITY CASCADE");
+    jdbcTemplate.execute("TRUNCATE slideshows RESTART IDENTITY CASCADE");
   }
 
   @BeforeAll

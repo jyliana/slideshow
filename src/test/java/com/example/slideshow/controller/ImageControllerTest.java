@@ -2,13 +2,10 @@ package com.example.slideshow.controller;
 
 import com.example.slideshow.config.BaseConfigurationTest;
 import com.example.slideshow.entity.Image;
-import com.example.slideshow.repository.ImageRepository;
 import lombok.SneakyThrows;
 import org.hamcrest.core.Is;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,17 +24,9 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 class ImageControllerTest extends BaseConfigurationTest {
   private static final String REST_API = "/images";
 
-  @Autowired
-  private ImageRepository imageRepository;
-
   @BeforeEach
   public void setup() {
     super.setup();
-  }
-
-  @AfterEach
-  public void cleanUp() {
-    imageRepository.deleteAll();
   }
 
   @Test
@@ -102,8 +91,7 @@ class ImageControllerTest extends BaseConfigurationTest {
   @SneakyThrows
   void testGetImage_200Response() {
     // Given
-    var newImage = new Image("http://example.com/image.jpg", 5);
-    imageRepository.save(newImage);
+    var newImage = imageRepository.save(new Image("http://example.com/image.jpg", 5));
 
     var uriString = fromUriString(REST_API)
             .path("/getImage/{id}")
@@ -137,10 +125,9 @@ class ImageControllerTest extends BaseConfigurationTest {
 
   @Test
   @SneakyThrows
-  void testDeleteImage_201Response() {
+  void testDeleteImage_202Response() {
     // Given
-    var newImage = new Image("http://example.com/image.jpg", 5);
-    imageRepository.save(newImage);
+    var newImage = imageRepository.save(new Image("http://example.com/image.jpg", 5));
 
     var uriString = fromUriString(REST_API)
             .path("/deleteImage/{id}")
@@ -156,9 +143,9 @@ class ImageControllerTest extends BaseConfigurationTest {
             .andExpect(status().isAccepted())
             .andExpect(jsonPath("$.id").doesNotExist());
 
-    var image = imageRepository.findById(newImage.getId());
+    var exists = imageRepository.existsById(newImage.getId());
 
-    assertThat(image.isEmpty()).isTrue();
+    assertThat(exists).isFalse();
   }
 
   @Test

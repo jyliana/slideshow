@@ -59,6 +59,7 @@ public class SlideshowService {
     return slideshowRepository.save(slideshow);
   }
 
+  @Transactional
   public void deleteSlideshow(Long id) {
     slideshowRepository.deleteById(id);
   }
