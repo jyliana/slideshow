@@ -1,6 +1,7 @@
 package com.example.slideshow.controller;
 
 import com.example.slideshow.dto.ImageDto;
+import com.example.slideshow.request.ImageRequest;
 import com.example.slideshow.service.ImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +25,10 @@ public class ImageController {
   private ImageService imageService;
 
   @PostMapping("/addImage")
-  public ResponseEntity<ImageDto> addImage(@RequestParam String url, @RequestParam Integer duration) {
+  public ResponseEntity<ImageDto> addImage(@RequestBody ImageRequest request) {
     return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(imageService.addImage(url, duration));
+            .body(imageService.addImage(request.url(), request.duration()));
   }
 
   @GetMapping("/getImage/{id}")

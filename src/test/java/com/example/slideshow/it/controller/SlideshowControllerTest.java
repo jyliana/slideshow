@@ -38,16 +38,20 @@ class SlideshowControllerTest extends BaseConfigurationTest {
     imageRepository.save(new Image("http://example.com/image_forest.jpg", 5));
     imageRepository.save(new Image("http://example.com/image_field.jpg", 10));
 
+    String jsonBody = """
+            {
+               "name":"Vacation",
+               "imagesIds":[1, 2]
+            }
+            """;
+
     var uriString = fromUriString(REST_API)
             .path("/addSlideshow")
-            .queryParam("name", "Vacation")
             .toUriString();
-
-    var payload = objectMapper.writeValueAsString(List.of(1L, 2L));
 
     // When
     var result = mockMvc.perform(MockMvcRequestBuilders.post(uriString)
-            .content(payload)
+            .content(jsonBody)
             .contentType(APPLICATION_JSON));
 
     // Then
@@ -86,14 +90,18 @@ class SlideshowControllerTest extends BaseConfigurationTest {
     // Given
     var uriString = fromUriString(REST_API)
             .path("/addSlideshow")
-            .queryParam("name", "Vacation")
             .toUriString();
 
-    var payload = objectMapper.writeValueAsString(List.of(1L, 2L));
+    String jsonBody = """
+            {
+               "name":"Vacation",
+               "imagesIds":[1, 2]
+            }
+            """;
 
     // When
     var result = mockMvc.perform(MockMvcRequestBuilders.post(uriString)
-            .content(payload)
+            .content(jsonBody)
             .contentType(APPLICATION_JSON));
 
     // Then

@@ -35,13 +35,20 @@ class ImageControllerTest extends BaseConfigurationTest {
     // Given
     var uriString = fromUriString(REST_API)
             .path("/addImage")
-            .queryParam("url", "http://example.com/image.jpg")
-            .queryParam("duration", "10")
             .toUriString();
+
+    String jsonBody = """
+            {
+               "url":"http://example.com/image.jpg",
+               "duration":"10"
+            }
+            """;
+
 
     // When
     var result = mockMvc.perform(MockMvcRequestBuilders.post(uriString)
-            .contentType(APPLICATION_JSON));
+            .contentType(APPLICATION_JSON)
+            .content(jsonBody));
 
     // Then
     result
@@ -70,13 +77,19 @@ class ImageControllerTest extends BaseConfigurationTest {
     // Given
     var uriString = fromUriString(REST_API)
             .path("/addImage")
-            .queryParam("url", "http://example.com/image.com")
-            .queryParam("duration", "10")
             .toUriString();
+
+    String jsonBody = """
+            {
+               "url":"http://example.com/image.com",
+               "duration":"10"
+            }
+            """;
 
     // When
     var result = mockMvc.perform(MockMvcRequestBuilders.post(uriString)
-            .contentType(APPLICATION_JSON));
+            .contentType(APPLICATION_JSON)
+            .content(jsonBody));
 
     // Then
     result

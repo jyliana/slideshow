@@ -2,8 +2,7 @@ package com.example.slideshow.controller;
 
 import com.example.slideshow.dto.SlideshowDto;
 import com.example.slideshow.entity.ProofOfPlayEvent;
-import com.example.slideshow.entity.Slideshow;
-import com.example.slideshow.entity.SlideshowRequest;
+import com.example.slideshow.request.SlideshowRequest;
 import com.example.slideshow.service.ProofOfPlayEventService;
 import com.example.slideshow.service.SlideshowService;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,15 +26,11 @@ public class SlideshowController {
   private SlideshowService slideshowService;
   private ProofOfPlayEventService proofOfPlayEventService;
 
-  @PostMapping("/addSlideShowWithNewImages")
-  public ResponseEntity<Slideshow> addSlideshowWithNewImages(@RequestBody SlideshowRequest request) {
-    var slideshow = slideshowService.addSlideshowWithNewImages(request.images(), request.name());
-    return ResponseEntity.ok(slideshow);
-  }
-
   @PostMapping("/addSlideshow")
-  public ResponseEntity<SlideshowDto> addSlideshow(@RequestBody List<Long> imageIds, @RequestParam String name) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(slideshowService.addSlideshow(imageIds, name));
+  public ResponseEntity<SlideshowDto> addSlideshow(@RequestBody SlideshowRequest request) {
+    return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(slideshowService.addSlideshow(request.name(), request.imagesIds()));
   }
 
   @GetMapping("/getSlideshow/{id}")

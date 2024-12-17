@@ -23,7 +23,7 @@ public class SlideshowService {
   private SlideshowImageRepository slideshowImageRepository;
   private ImageRepository imageRepository;
 
-  public SlideshowDto addSlideshow(List<Long> imageIds, String name) {
+  public SlideshowDto addSlideshow(String name, List<Long> imageIds) {
     List<Image> images = imageRepository.findAllById(imageIds);
 
     if (images.isEmpty()) {
@@ -40,15 +40,6 @@ public class SlideshowService {
 
   @Transactional
   private Slideshow saveSlideshowWithImages(Slideshow slideshow) {
-    return slideshowRepository.save(slideshow);
-  }
-
-  @Transactional
-  public Slideshow addSlideshowWithNewImages(List<Image> images, String name) {
-    var slideshow = new Slideshow();
-    slideshow.setName(name);
-    slideshow.setImages(images);
-
     return slideshowRepository.save(slideshow);
   }
 
