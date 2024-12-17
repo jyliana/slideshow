@@ -1,6 +1,6 @@
-package com.example.slideshow.controller;
+package com.example.slideshow.it.controller;
 
-import com.example.slideshow.config.BaseConfigurationTest;
+import com.example.slideshow.it.config.BaseConfigurationTest;
 import com.example.slideshow.dto.SlideshowDto;
 import com.example.slideshow.entity.Image;
 import com.example.slideshow.entity.Slideshow;
@@ -214,6 +214,56 @@ class SlideshowControllerTest extends BaseConfigurationTest {
     List<SlideshowDto.ImageDto> slideshowDtoList = objectMapper
             .readerForListOf(SlideshowDto.ImageDto.class)
             .readValue(response);
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetProof_Of_Play_200Response() {
+    // Given
+    var image = imageRepository.save(new Image("http://example.com/image_forest.jpg", 5));
+    var slideshow = new Slideshow("Vacation");
+
+    slideshow.setImages(List.of(image));
+    slideshowRepository.save(slideshow);
+
+    var uriString = fromUriString(REST_API)
+            .path("/{id}/proof-of-play/{imageId}")
+            .uriVariables(Map.of("id", "1", "imageId", "1"))
+            .toUriString();
+
+    // When
+    var result = mockMvc.perform(MockMvcRequestBuilders.get(uriString)
+            .contentType(APPLICATION_JSON));
+
+    // Then
+    result
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.slideshowId", is(1)))
+            .andExpect(jsonPath("$.imageId", is(1)))
+            .andExpect(jsonPath("$.playedAt").exists());
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetProof_Of_PlayNonExistentEntities_404Response() {
+    // Given
+    var uriString = fromUriString(REST_API)
+            .path("/{id}/proof-of-play/{imageId}")
+            .uriVariables(Map.of("id", "1", "imageId", "1"))
+            .toUriString();
+
+    // When
+    var result = mockMvc.perform(MockMvcRequestBuilders.get(uriString)
+            .contentType(APPLICATION_JSON));
+
+    // Then
+    result
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.apiPath", Is.is("uri=/slideShow/1/proof-of-play/1")))
+            .andExpect(jsonPath("$.errorCode", Is.is(HttpStatus.NOT_FOUND.getReasonPhrase())))
+            .andExpect(jsonPath("$.errorMsg", startsWith("Slideshow_id: 1 with image_id: 1 cannot be found")))
+            .andExpect(jsonPath("$.errorTime").exists());
   }
 
 }

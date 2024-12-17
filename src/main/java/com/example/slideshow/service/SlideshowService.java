@@ -23,7 +23,6 @@ public class SlideshowService {
   private SlideshowImageRepository slideshowImageRepository;
   private ImageRepository imageRepository;
 
-
   public SlideshowDto addSlideshow(List<Long> imageIds, String name) {
     List<Image> images = imageRepository.findAllById(imageIds);
 
@@ -32,22 +31,16 @@ public class SlideshowService {
     }
 
     var slideshow = new Slideshow(name);
-    var savedSlideshow = saveSlideshowWithImages(slideshow, images);
+    slideshow.setImages(images);
+
+    var savedSlideshow = saveSlideshowWithImages(slideshow);
 
     return getSlideshow(savedSlideshow.getId());
   }
 
   @Transactional
-  private Slideshow saveSlideshowWithImages(Slideshow slideshow, List<Image> images) {
-    slideshow = slideshowRepository.save(slideshow);
-
-    // TO DO - DELETE OR NOT?
-    for (Image image : images) {
-      var slideshowImage = new SlideshowImage(slideshow, image);
-      slideshowImageRepository.save(slideshowImage);
-    }
-
-    return slideshow;
+  private Slideshow saveSlideshowWithImages(Slideshow slideshow) {
+    return slideshowRepository.save(slideshow);
   }
 
   @Transactional

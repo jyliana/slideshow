@@ -7,6 +7,14 @@ spring:
   main:
     banner-mode: off
 
+  kafka:
+    listener:
+      missing-topics-fatal: false
+    producer:
+      bootstrap-servers:
+        - localhost:9092 # for local testing
+        - kafka:29092  # for testing with everything in docker
+
   datasource:
     url: jdbc:postgresql://localhost:5432/slideshow
     username: postgres

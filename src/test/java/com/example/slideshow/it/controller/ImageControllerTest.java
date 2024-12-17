@@ -1,6 +1,6 @@
-package com.example.slideshow.controller;
+package com.example.slideshow.it.controller;
 
-import com.example.slideshow.config.BaseConfigurationTest;
+import com.example.slideshow.it.config.BaseConfigurationTest;
 import com.example.slideshow.entity.Image;
 import lombok.SneakyThrows;
 import org.hamcrest.core.Is;

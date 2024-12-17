@@ -1,4 +1,4 @@
-package com.example.slideshow.config;
+package com.example.slideshow.it.config;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

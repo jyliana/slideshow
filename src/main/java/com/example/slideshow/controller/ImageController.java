@@ -1,7 +1,6 @@
 package com.example.slideshow.controller;
 
 import com.example.slideshow.dto.ImageDto;
-import com.example.slideshow.entity.Image;
 import com.example.slideshow.service.ImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ public class ImageController {
   private ImageService imageService;
 
   @PostMapping("/addImage")
-  public ResponseEntity<Image> addImage(@RequestParam String url, @RequestParam Integer duration) {
+  public ResponseEntity<ImageDto> addImage(@RequestParam String url, @RequestParam Integer duration) {
     return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(imageService.addImage(url, duration));
