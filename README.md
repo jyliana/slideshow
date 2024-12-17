@@ -1,3 +1,14 @@
+## How to check everything:
+
+- To test locally, you need to start docker-compose for Kafka first:
+```
+docker-compose -f docker-kafka.yml -p kafka up -d   
+```
+- to test everything running as a set of docker containers run this command:
+```
+docker-compose -f docker-full.yml -p slideshow up -d
+```
+
 ## Request examples for REST:
 
 ### Add image
