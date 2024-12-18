@@ -43,7 +43,7 @@ services:
   slideshow:
     build:
       context: .
-    image: "jyliana/slideshow:v1"
+    image: "jyliana/slideshow:latest"
     container_name: slideshow_service
     depends_on:
       - postgres
