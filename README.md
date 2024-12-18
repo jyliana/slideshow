@@ -14,7 +14,7 @@ docker-compose -f docker-full.yml -p slideshow up -d
 ### Add image
 
 ``` 
-curl -X POST "localhost:8012/images/addImage?url=https://media.istockphoto.com/id/1445233447/photo/landscape-gardener-laying-turf-for-new-lawn.jpg?s=612x612%26w=0%26k=20%26c=OAK9mHqL-5K36q85Fn46HTQZZUwN5yCR0GS80bu1iOI=&duration=5"
+curl -X POST "http://localhost:8012/images/addImage" -H "Content-Type: application/json" -d '{"url":"https://media.istockphoto.com/id/2167996762/uk/%D1%84%D0%BE%D1%82%D0%BE/flamingos-on-lake.jpg?s=2048x2048&w=is&k=20&c=A_twH4lS0xkDGqh1oSO9aOEREPNEJpdRUkwOwsXN7nE=", "duration":"2"}'
 ```
 
 **Response**
@@ -49,7 +49,7 @@ curl -X GET "http://localhost:8012/images/getImage/2"
 
 ### Add slideshow with array of images' ids
 ```  
-curl -X POST "http://localhost:8012/slideShow/addSlideshow?name=My%20garden" -H "Content-Type: application/json" -d "[2, 3]"
+curl -X POST "http://localhost:8012/slideShow/addSlideshow" -H "Content-Type: application/json" -d '{"name":"My garden", "imagesIds":[2, 3]}'
 ``` 
 
 **Response** 
